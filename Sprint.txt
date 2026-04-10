@@ -1,0 +1,38 @@
+The Execution Timeline
+Because the software engineering is the bottleneck, we are not building this chronologically (Research -> Script -> Video). We are building it backward, starting with the highest risk factor. If you can't stitch the video locally, the rest of the pipeline doesn't matter.
+
+Sprint 1: The Local Rendering Engine (Highest Risk)
+
+Goal: Prove the RTX 5090 can generate and stitch video via Python.
+
+Action 1: Pull down CogVideoX-5B or Stable Video Diffusion (SVD) and get it running locally.
+
+Action 2: Write a standalone Python script that takes a hardcoded text prompt, generates two 4-second video clips locally, and saves them to disk.
+
+Action 3: Write the MoviePy logic to take a dummy .wav audio file and those two video clips, and render them into a single .mp4 where the visual cut happens exactly when the audio dictates.
+
+Sprint 2: OpenClaw Orchestration & API Routing
+
+Goal: Connect the "Brain" to the "Hands."
+
+Action 1: Stand up the OpenClaw daemon.
+
+Action 2: Write the MCP tool/plugin that allows the OpenClaw Manager to trigger the Sprint 1 video generation script.
+
+Action 3: Integrate the Claude 3.5 Sonnet API to take a hardcoded topic and output the structured JSON format your video script will require (e.g., [{"scene": 1, "prompt": "cyberpunk city", "audio": "Welcome to the future..."}]).
+
+Sprint 3: The Data Pipeline & Voice
+
+Goal: Automate the input and the audio.
+
+Action 1: Configure the local Llama-3 instance via Ollama to handle the YouTube/Twitter trend parsing.
+
+Action 2: Implement the local TTS engine (F5-TTS) or map out the ElevenLabs API integration to generate the .wav files dynamically based on Claude's script.
+
+Sprint 4: The Telegram Gate & Playwright
+
+Goal: Secure the output.
+
+Action 1: Build the Telegram bot integration so OpenClaw can ping your phone with the final rendered .mp4.
+
+Action 2: Build the Playwright script to ingest your YouTube session cookies and automate the upload sequence once you reply "YES" on Telegram.
