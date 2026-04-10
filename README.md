@@ -1,46 +1,38 @@
-# OpenClaw Content Manager: Niche Publishing Pipeline
+# OpenClaw Content Manager: Cinematic Video Pipeline
 
 ## Overview
-The OpenClaw Content Manager is an autonomous, local-first agent orchestration system designed to manage a complete digital publishing pipeline. Built on the [OpenClaw](https://github.com/your-link-here) framework, this system coordinates multiple AI models to handle market research, long-form content generation, and automated distribution.
+The OpenClaw Content Manager is an autonomous, local-first orchestration system designed to operate a "Cash Cow" YouTube Network. Built on the OpenClaw framework, this system manages the entire lifecycle of high-retention video content: trend research, scriptwriting, voice synthesis, video frame generation, and final assembly.
 
-By leveraging enthusiast-grade local hardware (RTX 5090 / Ryzen 7 9800X3D), this architecture drastically reduces cloud API burn rates by routing high-volume data parsing to local inference models (Llama-3), while reserving premium cloud APIs (Claude 3.5 Sonnet) strictly for high-fidelity creative output.
+**The Hardware Advantage:** Standard automated video pipelines fail due to the massive API burn rate of cloud video generation (e.g., Runway Gen-3). This architecture completely bypasses those costs by executing VRAM-heavy video diffusion models locally on enthusiast-grade hardware (NVIDIA RTX 5090 32GB / Ryzen 7 9800X3D). 
 
 ## Core Architecture
 
-This system utilizes a "Manager" agent to delegate tasks across four distinct operational phases:
+The system utilizes a central OpenClaw "Manager" agent to orchestrate the following pipeline:
 
-### 1. Market Intelligence (Local Inference)
-* **Objective:** Identify high-intent, low-competition topics based on public search volume.
-* **Mechanism:** OpenClaw agents utilize official Data APIs (Serper/PyTrends, Reddit API) to scrape engagement metrics.
-* **Compute:** Heavy data parsing and summary generation are executed locally via `vLLM`/`Ollama` (Llama-3 8B/70B) to maintain a zero-cost research loop.
+### 1. The Trend Spotter (Local Inference)
+* **Objective:** Identify high-velocity topics with strong retention potential.
+* **Mechanism:** OpenClaw agents scrape YouTube API data and trending metrics.
+* **Compute:** Local execution via `vLLM` or `Ollama` (Llama-3 8B) for zero-cost, high-volume data parsing.
 
-### 2. Content Generation (Cloud API)
-* **Objective:** Architect high-quality, long-form manuscripts (15,000+ words).
-* **Mechanism:** The Manager agent passes the locally-generated, validated outlines to the Claude 3.5 Sonnet API for creative drafting, ensuring professional-grade prose.
+### 2. The Retention Scriptwriter (Cloud API)
+* **Objective:** Generate highly engaging, retention-optimized video scripts.
+* **Mechanism:** The locally-validated topic is routed to the Anthropic API (Claude 3.5 Sonnet) to draft a script with precise scene breakdowns and a strong 5-second hook.
 
-### 3. Visual Assets (Local API / MCP)
-* **Objective:** Generate high-end, artistic book covers.
-* **Mechanism:** Utilizing the OpenClaw Model Context Protocol (MCP), the system interfaces directly with a locally hosted instance of Stable Diffusion 3 Medium or Flux.1, leveraging the RTX 5090's 32GB VRAM for rapid, cost-free asset generation.
+### 3. Audio & Cinematic Generation (Local GPU / MCP)
+* **Voice Engine:** Local execution of XTTSv2 or F5-TTS to generate high-fidelity voiceovers.
+* **Video Engine (The Heavy Lifter):** Utilizing the OpenClaw Model Context Protocol (MCP), the Manager commands a local instance of **CogVideoX-5B** or **Stable Video Diffusion**. The RTX 5090 generates 4-second B-roll clips for every scene specified in the script.
 
-### 4. Automated Distribution & Security
-* **Objective:** Secure, automated uploads to Amazon KDP and IngramSpark without triggering bot-detection bans.
-* **Mechanism:** * **Session Mirroring:** Utilizes Python and Playwright for browser automation, injecting saved session cookies and local storage to mirror an established, authenticated human session.
-  * **Human-in-the-Loop (HITL):** A mandatory approval gate via Telegram API. The OpenClaw Manager pauses the pipeline and sends a summary/preview to the operator's device. No content is published or uploaded without explicit `YES` confirmation.
+### 4. Automated Assembly (Python)
+* **Objective:** Stitch raw assets into a cohesive, publish-ready MP4.
+* **Mechanism:** A custom Python worker utilizes `MoviePy` to dynamically calculate the audio length and splice the generated 4K B-roll clips to match the pacing of the voiceover, injecting dynamic subtitles.
 
-## Why OpenClaw?
-Standard LLM wrappers are stateless. This pipeline requires a persistent daemon capable of interacting with the local file system and executing secure, sandboxed commands. 
-* **State Management:** The OpenClaw Gateway natively handles session routing and memory, allowing the Manager agent to coordinate multi-day asynchronous tasks.
-* **Data Sovereignty:** API keys, session cookies, and proprietary prompt matrices remain completely air-gapped on the host machine.
-* **Extensibility:** Native integration for Telegram (HITL) and seamless tool injection via the ClawHub plugin ecosystem.
+### 5. Distribution & Security (HITL)
+* **Objective:** Secure YouTube uploads avoiding "Reused Content" or bot bans.
+* **Mechanism:**
+  * **Session Mirroring:** Playwright headless browser automation injecting preserved session cookies.
+  * **Human-in-the-Loop (HITL):** A Telegram bot integration. The OpenClaw Manager pauses the pipeline, sends the finalized MP4 to the operator's device, and waits for a strict `YES` command before uploading.
 
 ## Tech Stack
-* **Orchestration:** OpenClaw 
-* **Local Inference:** Ollama / vLLM (Llama-3)
-* **Cloud Inference:** Anthropic API (Claude 3.5 Sonnet)
-* **Automation:** Python, Playwright
-* **Hardware Profile:** Optimized for NVIDIA RTX 50-series (local LLM/Image generation) and high-thread-count CPUs (Ryzen 9000 series).
-
-## Current Phase: Slice 1 - The Research Loop
-* [ ] Integrate PyTrends/Serper API via OpenClaw skill.
-* [ ] Configure local Llama-3 parsing logic.
-* [ ] Implement Telegram HITL bot for topic approval.
+* **Orchestration:** OpenClaw (Daemon & Memory Management)
+* **Inference:** Ollama (Llama-3), CogVideoX / SVD, F5-TTS
+* **Assembly & Automation:** Python (`MoviePy`), Playwright
